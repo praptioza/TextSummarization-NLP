@@ -9,72 +9,71 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 
 class Ui_metin(object):
-    def ozetle(self):
-        metin = self.plainTextEdit.toPlainText()
-        metin = re.sub(r'\[[0-9]*\]', ' ', metin)
-        metin = re.sub(r'\s+', ' ', metin)
+    def summary(self):
+        text = self.plainTextEdit.toPlainText()
+        text = re.sub(r'\[[0-9]*\]', ' ', text)
+        text = re.sub(r'\s+', ' ', text)
 
-        print(metin)
+        print(text)
 
-        # metni cumlelere ayiriyoruz.
-        cumle_listesi = nltk.sent_tokenize(metin)
+        # Splitting the text into sentences.
+        sentences = nltk.sent_tokenize(text)
 
-        # ingilizcedeki durdurma kelimelerini aliyoruz.
-        durdurma_kelimeleri = nltk.corpus.stopwords.words('english')
+        # Get english stopwords
+        stopwords = nltk.corpus.stopwords.words('english')
 
-        # Hangi kelimenin agirlikli olarak tekrarlandigini bulmak icin noktalama isaretlerini de kaldiriyoruz.
-        sadece_kelime_metni = re.sub('[^a-zA-Z]', ' ', metin )
-        sadece_kelime_metni = re.sub(r'\s+', ' ', sadece_kelime_metni)
+        # Remove punctuation marks to find which word is repeated most frequently
+        text_with_words = re.sub('[^a-zA-Z]', ' ', text )
+        text_with_words = re.sub(r'\s+', ' ', text_with_words)
 
-        # burada kelimelerin tekrar sayilarini tutuyoruz.
-        kelime_tekrarlari = {}
-        # ilk olarak ingilizcedeki durdurma kelimeleri mi bakiyoruz.
-        # eger oyleyse kelime sozlukte varsa +1 eklenir, yoksa 1 olarak baslatilir.
-        for kelime in nltk.word_tokenize(sadece_kelime_metni):
-            if kelime not in durdurma_kelimeleri:
-                if kelime in kelime_tekrarlari.keys():
-                    kelime_tekrarlari[kelime] += 1
+        # Keep track of word frequency
+        word_frequency = {}
+        # If word is not a stop word we will add 1 to its count if it is present in the word_frequency
+        # If not start with 1  
+        for word in nltk.word_tokenize(text_with_words):
+            if word not in stopwords:
+                if word in word_frequency.keys():
+                    word_frequency[word] += 1
                 else:
-                    kelime_tekrarlari[kelime] = 1
+                    word_frequency[word] = 1
 
-        # en cok tekrar eden agirlikli kelimeyi aliyoruz.
-        max_tekrarlanan_kelime = max(kelime_tekrarlari.values())
+        # Count of Most frequently repeated weighted word
+        most_frequent = max(word_frequency.values())
 
-        # Son olarak, agirlikli sikligi bulmak için, asagida gosterildigi gibi, tüm sozcuklerin gecis sayisini en cok gecen 
-        # sozcugun sikligina bolebiliriz.
-        for kelime in kelime_tekrarlari.keys():
-            kelime_tekrarlari[kelime] = (kelime_tekrarlari[kelime]/max_tekrarlanan_kelime)
+        # Finally, to find the weighted frequency, as shown below, we can divide 
+        # the occurrence count of all words by the frequency of the most occurring word.
+        for word in word_frequency.keys():
+            word_frequency[word] = (word_frequency[word]/most_frequent)
 
-        # Bu kisimda her cumleye ait bir puan hesapliyoruz.
-        # Metinden ayirdigimiz cumleler uzerinde for ile geziniyoruz.
-        # Cumlelerdeki kelimelere erisiyoruz. Kelimeler word_frequencies yapisinda bulunuyor mu bakiyoruz.
-        cumle_puanlari = {}
-        for cumle_kelimeleri in cumle_listesi:
-            for kelime in nltk.word_tokenize(cumle_kelimeleri.lower()):
-                if kelime in kelime_tekrarlari.keys():
-                    if len(cumle_kelimeleri.split(' ')) < 30: ## 30 kelimeden az olan cumleler icin hesapliyoruz. Cok uzun olmamasi icin
-                        if cumle_kelimeleri in cumle_puanlari.keys(): # Cumleler anahtar deger olarak aliniyor. Cumledeki ilk kelimenin frekansi atanir.
-                            cumle_puanlari[cumle_kelimeleri] += kelime_tekrarlari[kelime]
+        # Iterate over the sentences extracted from the text to compute a score for each sentence based 
+        # on the presence of words in the word_frequency structure
+        sentence_score = {}
+        for sentence in sentences:
+            for word in nltk.word_tokenize(sentence.lower()):
+                if word in word_frequency.keys():
+                    if len(sentence.split(' ')) < 30: # Calculate scores for sentences with fewer than 30 words to avoid excessive length
+                        if sentence in sentence_score.keys(): # The frequency of the first word in the sentence is assigned
+                            sentence_score[sentence] += word_frequency[word]
                         else:
-                            cumle_puanlari[cumle_kelimeleri] = kelime_tekrarlari[kelime]
+                            sentence_score[sentence] = word_frequency[word]
 
 
-        # Burada en yuksek puana sahip ilk 10 cumleyi aliyoruz. Daha fazlasini da alabiliriz verecegimiz degere baglidir.
-        ozet_cumleleri = heapq.nlargest(7, cumle_puanlari, key=cumle_puanlari.get)
+        # Take the top sentences with the highest score. We can take more depending on the value we provide.
+        summary_sentence = heapq.nlargest(7, sentence_score, key=sentence_score.get)
 
-        ozet = ' '.join(ozet_cumleleri)
+        summary_total = ' '.join(summary_sentence)
         print("OZETLEME ALGORITMASI")
-        print(ozet)
-        self.textBrowser_2.setText(ozet)
+        print(summary_total)
+        self.textBrowser_2.setText(summary_total)
         f = open("ozetlenenMetin.txt", "w")
-        f.write(ozet)
+        f.write(summary_total)
         f.close()
 
         
-    def setupUi(self, metin):
-        metin.setObjectName("metin")
-        metin.resize(697, 584)
-        self.centralwidget = QtWidgets.QWidget(metin)
+    def setupUi(self, text):
+        text.setObjectName("text")
+        text.resize(697, 584)
+        self.centralwidget = QtWidgets.QWidget(text)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(10, 89, 181, 61))
@@ -95,8 +94,8 @@ class Ui_metin(object):
         self.textBrowser_2 = QtWidgets.QTextBrowser(self.centralwidget)
         self.textBrowser_2.setGeometry(QtCore.QRect(200, 290, 481, 251))
         self.textBrowser_2.setObjectName("textBrowser_2")
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.ozetle())
-        self.pushButton.setGeometry(QtCore.QRect(40, 250, 101, 61))
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.summary())
+        self.pushButton.setGeometry(QtCore.QRect(20, 250, 151, 51))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(170, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -117,20 +116,20 @@ class Ui_metin(object):
         self.plainTextEdit = QtWidgets.QPlainTextEdit(self.centralwidget)
         self.plainTextEdit.setGeometry(QtCore.QRect(200, 10, 481, 251))
         self.plainTextEdit.setObjectName("plainTextEdit")
-        metin.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(metin)
+        text.setCentralWidget(self.centralwidget)
+        self.statusbar = QtWidgets.QStatusBar(text)
         self.statusbar.setObjectName("statusbar")
-        metin.setStatusBar(self.statusbar)
+        text.setStatusBar(self.statusbar)
 
-        self.retranslateUi(metin)
-        QtCore.QMetaObject.connectSlotsByName(metin)
+        self.retranslateUi(text)
+        QtCore.QMetaObject.connectSlotsByName(text)
 
-    def retranslateUi(self, metin):
+    def retranslateUi(self, text):
         _translate = QtCore.QCoreApplication.translate
-        metin.setWindowTitle(_translate("metin", "MainWindow"))
-        self.label.setText(_translate("metin", "ÖZETLENECEK METİN"))
-        self.label_2.setText(_translate("metin", "ÖZETLENEN METİN"))
-        self.pushButton.setText(_translate("metin", "ÖZETLE"))
+        text.setWindowTitle(_translate("text", "TextSummarization"))
+        self.label.setText(_translate("text", "Text"))
+        self.label_2.setText(_translate("text", "Summary"))
+        self.pushButton.setText(_translate("text", "Summarize"))
 
 if __name__ == "__main__":
     import sys
