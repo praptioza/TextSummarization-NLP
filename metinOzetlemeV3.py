@@ -48,7 +48,7 @@ for word in nltk.word_tokenize(text_with_words):
         else:
             word_frequency[word] = 1
 
-# en cok tekrar eden agirlikli kelimeyi aliyoruz.
+# Get most frequent word count
 most_frequent = max(word_frequency.values())
 
 # Finally, to find the weighted frequency, as shown below, we can divide 

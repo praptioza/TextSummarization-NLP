@@ -14,7 +14,7 @@ class Ui_MainWindow(object):
         self.ui.setupUi(self.window)
         self.window.show()
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
+        MainWindow.setObjectName("TextSummarization")
         MainWindow.resize(308, 107)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -63,10 +63,10 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Metin Özetleme Uygulaması"))
-        self.radioButton.setText(_translate("MainWindow", "WIKIPEDIA"))
-        self.radioButton_2.setText(_translate("MainWindow", "METİN"))
-        self.label.setText(_translate("MainWindow", "Lütfen özetleme yapmak istediğiniz türü seçiniz"))
+        MainWindow.setWindowTitle(_translate("TextSummarization", "Text Summarization Application"))
+        self.radioButton.setText(_translate("TextSummarization", "WIKIPEDIA"))
+        self.radioButton_2.setText(_translate("TextSummarization", "TEXT"))
+        self.label.setText(_translate("TextSummarization", "Please select the type of summarization you would like to perform"))
 
 if __name__ == "__main__":
     import sys

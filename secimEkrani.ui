@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>TextSummarization</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QRadioButton" name="radioButton">
@@ -34,7 +34,7 @@
      <string notr="true"/>
     </property>
     <property name="text">
-     <string>WIKIPEDI</string>
+     <string>WIKIPEDIA</string>
     </property>
    </widget>
    <widget class="QRadioButton" name="radioButton_2">
@@ -54,7 +54,7 @@
      </font>
     </property>
     <property name="text">
-     <string>METİN</string>
+     <string>TEXT</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
@@ -110,7 +110,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Lütfen özetleme yapmak istediğiniz türü seçiniz</string>
+     <string>Please select the type of summarization you would like to perform</string>
     </property>
    </widget>
   </widget>

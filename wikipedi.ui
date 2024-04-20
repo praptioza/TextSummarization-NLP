@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>TextSummarization</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -51,7 +51,7 @@
      </font>
     </property>
     <property name="text">
-     <string>ÖZETLE</string>
+     <string>Summarize</string>
     </property>
    </widget>
    <widget class="QTextBrowser" name="textBrowser">
@@ -145,7 +145,7 @@
      </font>
     </property>
     <property name="text">
-     <string>ÖZET METİN</string>
+     <string>Summary</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit">
