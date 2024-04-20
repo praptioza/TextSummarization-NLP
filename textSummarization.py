@@ -62,10 +62,10 @@ class Ui_metin(object):
         summary_sentence = heapq.nlargest(7, sentence_score, key=sentence_score.get)
 
         summary_total = ' '.join(summary_sentence)
-        print("OZETLEME ALGORITMASI")
+        print("SUMMARY::")
         print(summary_total)
         self.textBrowser_2.setText(summary_total)
-        f = open("ozetlenenMetin.txt", "w")
+        f = open("textSummarizationOutput.txt", "w")
         f.write(summary_total)
         f.close()
 

@@ -81,7 +81,7 @@ class Ui_wikipedi(object):
         summary = ' '.join(summary_sentences)
         print("SUMMARY ::")
         self.textBrowser.setText(summary)
-        f = open("WikiSummary.txt", "w", encoding="utf-8")
+        f = open("WikiSummaryOutput.txt", "w", encoding="utf-8")
         f.write(summary)
         f.close()
 
@@ -100,7 +100,7 @@ class Ui_wikipedi(object):
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.summary())
-        self.pushButton.setGeometry(QtCore.QRect(540, 20, 81, 61))
+        self.pushButton.setGeometry(QtCore.QRect(480, 20, 148, 51))
         font = QtGui.QFont()
         font.setPointSize(15)
         font.setBold(True)

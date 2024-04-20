@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from wikipediSummarization import Ui_wikipedi
-from textSummarixation import Ui_metin
+from textSummarization import Ui_metin
 
 class Ui_MainWindow(object):
     def openWindow_wikipedi(self):
