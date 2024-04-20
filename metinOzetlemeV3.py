@@ -7,79 +7,75 @@ import heapq
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 
-## wikipedi sitesinden ozetlenecek konu ile ilgili metni cekiyoruz.
-veri = urllib.request.urlopen('https://en.wikipedia.org/wiki/Natural_language_processing')
-okunan_metin = veri.read()
+# Wikipedia URL of the topic you want to summarize
+data = urllib.request.urlopen('https://en.wikipedia.org/wiki/Natural_language_processing')
+read_text = data.read()
 
-ayristirilan_metin = bs.BeautifulSoup(okunan_metin,'lxml')
+parsed_text = bs.BeautifulSoup(read_text,'lxml')
 
-paragraflar = ayristirilan_metin.find_all('p')
+paragraphs = parsed_text.find_all('p')
 
-metin = ""
+text = ""
 
-for p in paragraflar:
-    metin += p.text
+for p in paragraphs:
+    text += p.text
 
-#print(metin) ## ozetlenecek metin 
+text = re.sub(r'\[[0-9]*\]', ' ', text)
+text = re.sub(r'\s+', ' ', text)
 
-# Referans numaralarini kaldiriyoruz.
-metin = re.sub(r'\[[0-9]*\]', ' ', metin)
-metin = re.sub(r'\s+', ' ', metin)
+print(text)
 
-print(metin)
+# Seperate the sentences
+sentences = nltk.sent_tokenize(text)
 
-# metni cumlelere ayiriyoruz.
-cumle_listesi = nltk.sent_tokenize(metin)
+# Remove punctuation marks to find which word is repeated most frequently
+text_with_words = re.sub('[^a-zA-Z]', ' ', text )
+text_with_words = re.sub(r'\s+', ' ', text_with_words)
 
-# Hangi kelimenin agirlikli olarak tekrarlandigini bulmak icin noktalama isaretlerini de kaldiriyoruz.
-sadece_kelime_metni = re.sub('[^a-zA-Z]', ' ', metin )
-sadece_kelime_metni = re.sub(r'\s+', ' ', sadece_kelime_metni)
-
-# ingilizcedeki durdurma kelimelerini aliyoruz.
-durdurma_kelimeleri = nltk.corpus.stopwords.words('english')
+# Get the english stopwords
+stopwords = nltk.corpus.stopwords.words('english')
 
 
 
-# burada kelimelerin tekrar sayilarini tutuyoruz.
-kelime_tekrarlari = {}
-# ilk olarak ingilizcedeki durdurma kelimeleri mi bakiyoruz.
-# eger oyleyse kelime sozlukte varsa +1 eklenir, yoksa 1 olarak baslatilir.
-for kelime in nltk.word_tokenize(sadece_kelime_metni):
-    if kelime not in durdurma_kelimeleri:
-        if kelime in kelime_tekrarlari.keys():
-            kelime_tekrarlari[kelime] += 1
+# Keep track of word frequency
+word_frequency = {}
+# If word is not a stop word we will add 1 to its count if it is present in the word_frequency
+# If not start with 1 
+for word in nltk.word_tokenize(text_with_words):
+    if word not in stopwords:
+        if word in word_frequency.keys():
+            word_frequency[word] += 1
         else:
-            kelime_tekrarlari[kelime] = 1
+            word_frequency[word] = 1
 
 # en cok tekrar eden agirlikli kelimeyi aliyoruz.
-max_tekrarlanan_kelime = max(kelime_tekrarlari.values())
+most_frequent = max(word_frequency.values())
 
-# Son olarak, agirlikli sikligi bulmak için, asagida gosterildigi gibi, tüm sozcuklerin gecis sayisini en cok gecen 
-# sozcugun sikligina bolebiliriz.
-for kelime in kelime_tekrarlari.keys():
-    kelime_tekrarlari[kelime] = (kelime_tekrarlari[kelime]/max_tekrarlanan_kelime)
+# Finally, to find the weighted frequency, as shown below, we can divide 
+# the occurrence count of all words by the frequency of the most occurring word.
+for word in word_frequency.keys():
+    word_frequency[word] = (word_frequency[word]/most_frequent)
 
-# Bu kisimda her cumleye ait bir puan hesapliyoruz.
-# Metinden ayirdigimiz cumleler uzerinde for ile geziniyoruz.
-# Cumlelerdeki kelimelere erisiyoruz. Kelimeler kelime tekrarlari yapisinda bulunuyor mu bakiyoruz.
-cumle_puanlari = {}
-for cumle_kelimeleri in cumle_listesi:
-    for kelime in nltk.word_tokenize(cumle_kelimeleri.lower()):
-        if kelime in kelime_tekrarlari.keys():
-            if len(cumle_kelimeleri.split(' ')) < 30: ## 30 kelimeden az olan cumleler icin hesapliyoruz. Cok uzun olmamasi icin
-                if cumle_kelimeleri in cumle_puanlari.keys(): # Cumleler anahtar deger olarak aliniyor. Cumledeki ilk kelimenin frekansi atanir.
-                    cumle_puanlari[cumle_kelimeleri] += kelime_tekrarlari[kelime]
+# Iterate over the sentences extracted from the text to compute a score for each sentence based 
+# on the presence of words in the word_frequency structure
+sentence_score = {}
+for sentence in sentences:
+    for word in nltk.word_tokenize(sentence.lower()):
+        if word in word_frequency.keys():
+            if len(sentence.split(' ')) < 30: # Calculate scores for sentences with fewer than 30 words to avoid excessive length
+                if sentence in sentence_score.keys(): # The frequency of the first word in the sentence is assigned
+                    sentence_score[sentence] += word_frequency[word]
                 else:
-                    cumle_puanlari[cumle_kelimeleri] = kelime_tekrarlari[kelime]
+                    sentence_score[sentence] = word_frequency[word]
 
 
-# Burada en yuksek puana sahip ilk 7 cumleyi aliyoruz. Daha fazlasini da alabiliriz verecegimiz degere baglidir.
-ozet_cumleleri = heapq.nlargest(7, cumle_puanlari, key=cumle_puanlari.get)
+# Take the top 7 sentences with the highest score. We can take more depending on the value we provide.
+summary_sentence = heapq.nlargest(7, sentence_score, key=sentence_score.get)
 
-ozet = ' '.join(ozet_cumleleri)
-print("OZETLEME ALGORITMASI")
-print(ozet)
+summary = ' '.join(summary_sentence)
+print("Summary::")
+print(summary)
 
-f = open("ozetlenenMetin.txt", "w")
-f.write(ozet)
+f = open("textSummary.txt", "w")
+f.write(summary)
 f.close()

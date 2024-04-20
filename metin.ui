@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>metin</class>
- <widget class="QMainWindow" name="metin">
+ <class>text</class>
+ <widget class="QMainWindow" name="text">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>TextSummarization</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -31,7 +31,7 @@
      </font>
     </property>
     <property name="text">
-     <string>ÖZETLENECEK METİN</string>
+     <string>Text</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -51,7 +51,7 @@
      </font>
     </property>
     <property name="text">
-     <string>ÖZETLENEN METİN</string>
+     <string>Summary</string>
     </property>
    </widget>
    <widget class="QTextBrowser" name="textBrowser_2">
@@ -118,7 +118,7 @@
      </font>
     </property>
     <property name="text">
-     <string>ÖZETLE</string>
+     <string>Summarize</string>
     </property>
    </widget>
    <widget class="QPlainTextEdit" name="plainTextEdit">
