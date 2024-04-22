@@ -3,12 +3,12 @@ from wikipediSummarization import Ui_wikipedi
 from textSummarization import Ui_metin
 
 class Ui_MainWindow(object):
-    def openWindow_wikipedi(self):
+    def wikipedia_window(self):
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_wikipedi()
         self.ui.setupUi(self.window)
         self.window.show()
-    def openWindow_metin(self):
+    def text_window(self):
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_metin()
         self.ui.setupUi(self.window)
@@ -18,7 +18,7 @@ class Ui_MainWindow(object):
         MainWindow.resize(308, 107)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.radioButton = QtWidgets.QRadioButton(self.centralwidget, clicked = lambda: self.openWindow_wikipedi())
+        self.radioButton = QtWidgets.QRadioButton(self.centralwidget, clicked = lambda: self.wikipedia_window())
         self.radioButton.setGeometry(QtCore.QRect(30, 50, 111, 21))
         font = QtGui.QFont()
         font.setPointSize(12)
@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
         self.radioButton.setFont(font)
         self.radioButton.setStyleSheet("")
         self.radioButton.setObjectName("radioButton")
-        self.radioButton_2 = QtWidgets.QRadioButton(self.centralwidget, clicked = lambda: self.openWindow_metin())
+        self.radioButton_2 = QtWidgets.QRadioButton(self.centralwidget, clicked = lambda: self.text_window())
         self.radioButton_2.setGeometry(QtCore.QRect(200, 50, 81, 21))
         font = QtGui.QFont()
         font.setPointSize(12)
