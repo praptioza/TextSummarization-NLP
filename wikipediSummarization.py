@@ -9,7 +9,7 @@ import heapq
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 
-class Ui_wikipedi(object):
+class wikipedia_page(object):
     def summary(self):
         url = self.lineEdit.text()
         data = urllib.request.urlopen(url)
@@ -160,7 +160,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_wikipedi()
+    ui = wikipedia_page()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())

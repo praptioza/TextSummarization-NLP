@@ -1,16 +1,18 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from wikipediSummarization import Ui_wikipedi
-from textSummarization import Ui_metin
+from wikipediSummarization import wikipedia_page
+from textSummarization import text_page
 
 class Ui_MainWindow(object):
     def wikipedia_window(self):
+
+        # Create window for start
         self.window = QtWidgets.QMainWindow()
-        self.ui = Ui_wikipedi()
+        self.ui = wikipedia_page()
         self.ui.setupUi(self.window)
         self.window.show()
     def text_window(self):
         self.window = QtWidgets.QMainWindow()
-        self.ui = Ui_metin()
+        self.ui = text_page()
         self.ui.setupUi(self.window)
         self.window.show()
     def setupUi(self, MainWindow):

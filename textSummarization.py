@@ -8,7 +8,7 @@ import heapq
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 
-class Ui_metin(object):
+class text_page(object):
     def summary(self):
         text = self.plainTextEdit.toPlainText()
         text = re.sub(r'\[[0-9]*\]', ' ', text)
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_metin()
+    ui = text_page()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
