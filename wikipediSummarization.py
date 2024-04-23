@@ -36,6 +36,15 @@ class wikipedia_page(object):
                 unique_entities.append(entity)
                 seen_entities.add(entity[0])
         return unique_entities
+    
+    def plot_sentiment_distribution(self, sentences):
+        sentiment_scores = [self.analyze_sentiment(sentence)['compound'] for sentence in sentences]
+        plt.hist(sentiment_scores, bins=20, color='lightgreen', edgecolor='black', alpha=0.7)
+        plt.title('Distribution of Sentiment Scores')
+        plt.xlabel('Sentiment Score')
+        plt.ylabel('Frequency')
+        plt.show()
+
 
     def summary(self):
         url = self.lineEdit.text()
@@ -94,6 +103,7 @@ class wikipedia_page(object):
         # Create a word cloud from the summary
         self.generate_word_cloud(summary_total)
         self.plot_text_length_distribution(summary_sentence)
+        self.plot_sentiment_distribution(summary_sentence)
         print("SUMMARY::")
         print(summary_total)
         self.textBrowser.setText(summary_total)
