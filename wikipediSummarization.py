@@ -36,6 +36,7 @@ class wikipedia_page(object):
                 unique_entities.append(entity)
                 seen_entities.add(entity[0])
         return unique_entities
+    
     def plot_sentiment_distribution(self, sentences):
         sentiment_scores = [self.analyze_sentiment(sentence)['compound'] for sentence in sentences]
         plt.hist(sentiment_scores, bins=20, color='lightgreen', edgecolor='black', alpha=0.7)
@@ -44,7 +45,30 @@ class wikipedia_page(object):
         plt.ylabel('Frequency')
         plt.show()
         
-        
+    def plot_text_length_distribution(self, texts):
+        text_lengths = [len(self.tokenize_words(text)) for text in texts]
+        plt.hist(text_lengths, bins=20, color='skyblue', edgecolor='black', alpha=0.7)
+        plt.title('Distribution of Text Lengths')
+        plt.xlabel('Number of Words')
+        plt.ylabel('Frequency')
+        plt.show()
+
+    def plot_top_frequent_words(self, text):
+        word_frequency = self.calculate_word_frequency(words=nltk.word_tokenize(text))
+        if not word_frequency:
+            print("No words found in the text.")
+            return
+        top_words = heapq.nlargest(20, word_frequency.items(), key=lambda item: item[1])
+        words, frequencies = zip(*top_words)
+        plt.figure(figsize=(10, 6))
+        plt.bar(words, frequencies, color='salmon')
+        plt.title('Top 20 Frequent Words')
+        plt.xlabel('Words')
+        plt.ylabel('Frequency')
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        plt.show()
+
     def summary(self):
         url = self.lineEdit.text()
         data = urllib.request.urlopen(url)
@@ -99,6 +123,22 @@ class wikipedia_page(object):
             sentiment_score = self.analyze_entity_sentiment(entity=entity,sentences=sentences)  # Pass the text associated with the entity
             print(f"Sentiment analysis for {entity[0]}: {sentiment_score}")
 
+        # Apply sentiment analysis on the top two entities
+        for entity in top_entities[:10]:
+            sentiment_score = self.analyze_entity_sentiment(entity=entity,sentences=sentences)  # Pass the text associated with the entity
+            print(f"Sentiment analysis for {entity[0]}: {sentiment_score}")
+
+        # Create a word cloud from the summary
+        self.generate_word_cloud(summary_total)
+        
+        # Plot text length distribution
+        self.plot_text_length_distribution(summary_sentence)
+        
+        # Plot sentiment distribution
+        self.plot_sentiment_distribution(summary_sentence)
+        
+        # Plot top frequent words
+        self.plot_top_frequent_words(summary_total)
         # Create a word cloud from the summary
         self.generate_word_cloud(summary_total)
         self.plot_text_length_distribution(summary_sentence)
