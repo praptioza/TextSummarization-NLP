@@ -62,7 +62,7 @@ class text_page(object):
         summary_sentence = heapq.nlargest(7, sentence_score, key=sentence_score.get)
         summary_total = ' '.join(summary_sentence)
         top_entities_with_tags = self.extract_top_entities_with_tags(summary_total)  # Ensure summary_total is passed as a string
-        print("Top 10 most relevant entities with tags:")
+        print("\n Top 10 most relevant entities with tags:")
         top_entities = []
         for entity, tag in top_entities_with_tags:
             print(f"{entity}: {tag}")
