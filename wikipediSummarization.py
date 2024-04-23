@@ -123,11 +123,6 @@ class wikipedia_page(object):
             sentiment_score = self.analyze_entity_sentiment(entity=entity,sentences=sentences)  # Pass the text associated with the entity
             print(f"Sentiment analysis for {entity[0]}: {sentiment_score}")
 
-        # Apply sentiment analysis on the top two entities
-        for entity in top_entities[:10]:
-            sentiment_score = self.analyze_entity_sentiment(entity=entity,sentences=sentences)  # Pass the text associated with the entity
-            print(f"Sentiment analysis for {entity[0]}: {sentiment_score}")
-
         # Create a word cloud from the summary
         self.generate_word_cloud(summary_total)
         
