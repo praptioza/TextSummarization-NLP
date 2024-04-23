@@ -31,14 +31,14 @@
     </property>
     <property name="font">
      <font>
-      <family>Times New Roman</family>
+      <family>Arial</family>
       <pointsize>30</pointsize>
       <italic>false</italic>
       <bold>true</bold>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 700 30pt &quot;Times New Roman&quot;;
+     <string notr="true">font: 700 30pt &quot;Arial&quot;;
 color: rgb(0, 60, 67);</string>
     </property>
     <property name="text">
@@ -59,14 +59,14 @@ color: rgb(0, 60, 67);</string>
     </property>
     <property name="font">
      <font>
-      <family>Times New Roman</family>
+      <family>Arial</family>
       <pointsize>15</pointsize>
       <italic>false</italic>
       <bold>true</bold>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 700 15pt &quot;Times New Roman&quot;;
+     <string notr="true">font: 700 15pt &quot;Arial&quot;;
 color: rgb(0, 60, 67);</string>
     </property>
     <property name="text">
@@ -108,14 +108,14 @@ border-color: rgb(0, 60, 67);</string>
     </property>
     <property name="font">
      <font>
-      <family>Times New Roman</family>
+      <family>Arial</family>
       <pointsize>30</pointsize>
       <italic>false</italic>
       <fontweight>ExtraBold</fontweight>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 800 30pt &quot;Times New Roman&quot;;
+     <string notr="true">font: 800 30pt &quot;Arial&quot;;
 color: rgb(0, 60, 67);</string>
     </property>
     <property name="text">
@@ -133,14 +133,14 @@ color: rgb(0, 60, 67);</string>
     </property>
     <property name="font">
      <font>
-      <family>Times New Roman</family>
+      <family>Arial</family>
       <pointsize>30</pointsize>
       <italic>false</italic>
       <bold>true</bold>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 700 30pt &quot;Times New Roman&quot;;
+     <string notr="true">font: 700 30pt &quot;Arial&quot;;
 color: rgb(0, 60, 67);</string>
     </property>
     <property name="text">

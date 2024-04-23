@@ -38,22 +38,22 @@ class Ui_MainWindow(object):
         self.radioButton = QtWidgets.QRadioButton(self.centralwidget,  clicked = lambda: self.wikipedia_window())       
         self.radioButton.setGeometry(QtCore.QRect(450, 340, 300, 40))
         font = QtGui.QFont()
-        font.setFamily("Times New Roman")
+        font.setFamily("Arial")
         font.setPointSize(20)
         font.setItalic(False)
         self.radioButton.setFont(font)
         self.radioButton.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.radioButton.setStyleSheet("font: 800 20pt \"Times New Roman\";\n" "color: rgb(19, 93, 102);")
+        self.radioButton.setStyleSheet("font: 800 20pt \"Arial\";\n" "color: rgb(19, 93, 102);")
         self.radioButton.setObjectName("radioButton")
         # create radio button 1 for Text option and style it 
         self.radioButton_2 = QtWidgets.QRadioButton(self.centralwidget, clicked = lambda: self.text_window())
         self.radioButton_2.setGeometry(QtCore.QRect(450, 440, 300, 40))
         font = QtGui.QFont()
-        font.setFamily("Times New Roman")
+        font.setFamily("Arial")
         font.setPointSize(20)
         font.setItalic(False)
         self.radioButton_2.setFont(font)
-        self.radioButton_2.setStyleSheet("font: 800 20pt \"Times New Roman\";\n" "color: rgb(19, 93, 102);")
+        self.radioButton_2.setStyleSheet("font: 800 20pt \"Arial\";\n" "color: rgb(19, 93, 102);")
         self.radioButton_2.setObjectName("radioButton_2")
 
         # create and setup ui elements with geometry, palettes for colors for first label
@@ -135,12 +135,12 @@ class Ui_MainWindow(object):
 
         # set font for label
         font = QtGui.QFont()
-        font.setFamily("Times New Roman")
+        font.setFamily("Arial")
         font.setPointSize(20)
         font.setBold(True)
         font.setItalic(False)
         self.label.setFont(font)
-        self.label.setStyleSheet("font: 700 20pt \"Times New Roman\";\n" "color: rgb(0, 60, 67);")
+        self.label.setStyleSheet("font: 700 20pt \"Arial\";\n" "color: rgb(0, 60, 67);")
         self.label.setObjectName("label")
 
         # create and setup ui elements with geometry, palettes for colors for first label
@@ -218,12 +218,12 @@ class Ui_MainWindow(object):
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.PlaceholderText, brush)
         self.label_2.setPalette(palette)
         font = QtGui.QFont()
-        font.setFamily("Times New Roman")
+        font.setFamily("Arial")
         font.setPointSize(30)
         font.setItalic(False)
         self.label_2.setFont(font)
         self.label_2.setAutoFillBackground(False)
-        self.label_2.setStyleSheet("font: 800 30pt \"Times New Roman\";\n" "color: rgb(0, 60, 67);")
+        self.label_2.setStyleSheet("font: 800 30pt \"Arial\";\n" "color: rgb(0, 60, 67);")
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName("label_2")
 

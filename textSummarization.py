@@ -18,6 +18,7 @@ nltk.download('stopwords')
 nltk.download('vader_lexicon')
 nlp = spacy.load("en_core_web_sm")
 
+
 class text_page(object):
     def extract_top_entities_with_tags(self, text, num_entities=10):
         doc = nlp(text)
@@ -164,7 +165,10 @@ class text_page(object):
         plt.show()
 
     def plot_text_length_distribution(self, texts):
-        text_lengths = [len(self.tokenize_words(text)) for text in texts]
+        text = self.plainTextEdit.toPlainText()
+        text = self.preprocess_text(text=text)
+        sentences = nltk.sent_tokenize(text)
+        text_lengths = [len(self.tokenize_words(sentence)) for sentence in sentences]
         plt.hist(text_lengths, bins=20, color='skyblue', edgecolor='black', alpha=0.7)
         plt.title('Distribution of Text Lengths')
         plt.xlabel('Number of Words')
@@ -174,6 +178,9 @@ class text_page(object):
 
         
     def plot_sentiment_distribution(self, sentences):
+        text = self.plainTextEdit.toPlainText()
+        text = self.preprocess_text(text=text)
+        sentences = nltk.sent_tokenize(text)
         sentiment_scores = [self.analyze_sentiment(sentence)['compound'] for sentence in sentences]
         plt.hist(sentiment_scores, bins=20, color='lightgreen', edgecolor='black', alpha=0.7)
         plt.title('Distribution of Sentiment Scores')
@@ -182,13 +189,13 @@ class text_page(object):
         plt.show()
 
         
-    def plot_text_length_distribution(self, texts):
-        text_lengths = [len(self.tokenize_words(text)) for text in texts]
-        plt.hist(text_lengths, bins=20, color='skyblue', edgecolor='black', alpha=0.7)
-        plt.title('Distribution of Text Lengths')
-        plt.xlabel('Number of Words')
-        plt.ylabel('Frequency')
-        plt.show()
+    # def plot_text_length_distribution(self, texts):
+    #     text_lengths = [len(self.tokenize_words(text)) for text in texts]
+    #     plt.hist(text_lengths, bins=20, color='skyblue', edgecolor='black', alpha=0.7)
+    #     plt.title('Distribution of Text Lengths')
+    #     plt.xlabel('Number of Words')
+    #     plt.ylabel('Frequency')
+    #     plt.show()
 
     def plot_top_frequent_words(self, text):
         word_frequency = self.calculate_word_frequency(words=nltk.word_tokenize(text))
@@ -222,11 +229,11 @@ class text_page(object):
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(65, 166, 250, 50))
         font = QtGui.QFont()
-        font.setFamily("Times New Roman")
+        font.setFamily("Arial")
         font.setPointSize(20)
         font.setItalic(False)
         self.label.setFont(font)
-        self.label.setStyleSheet("font: 800 20pt \"Times New Roman\";\n" "color: rgb(19, 93, 102);")
+        self.label.setStyleSheet("font: 800 20pt \"Arial\";\n" "color: rgb(19, 93, 102);")
         self.label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.label.setObjectName("label")
 
@@ -234,11 +241,11 @@ class text_page(object):
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(65, 482, 250, 50))
         font = QtGui.QFont()
-        font.setFamily("Times New Roman")
+        font.setFamily("Arial")
         font.setPointSize(20)
         font.setItalic(False)
         self.label_2.setFont(font)
-        self.label_2.setStyleSheet("font: 800 20pt \"Times New Roman\";\n" "color: rgb(19, 93, 102);")
+        self.label_2.setStyleSheet("font: 800 20pt \"Arial\";\n" "color: rgb(19, 93, 102);")
         self.label_2.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.label_2.setObjectName("label_2")
 
@@ -321,12 +328,12 @@ class text_page(object):
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.PlaceholderText, brush)
         self.pushButton.setPalette(palette)
         font = QtGui.QFont()
-        font.setFamily("Times New Roman")
+        font.setFamily("Arial")
         font.setPointSize(15)
         font.setBold(True)
         font.setItalic(False)
         self.pushButton.setFont(font)
-        self.pushButton.setStyleSheet("font: 700 15pt \"Times New Roman\";\n" "color: rgb(0, 60, 67);")
+        self.pushButton.setStyleSheet("font: 700 15pt \"Arial\";\n" "color: rgb(0, 60, 67);")
         self.pushButton.setObjectName("pushButton")
 
         # Create a QPlainTextEdit widget and set the central widget as its parent
@@ -339,11 +346,11 @@ class text_page(object):
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
         self.label_3.setGeometry(QtCore.QRect(350, 50, 500, 50))
         font = QtGui.QFont()
-        font.setFamily("Times New Roman")
+        font.setFamily("Arial")
         font.setPointSize(30)
         font.setItalic(False)
         self.label_3.setFont(font)
-        self.label_3.setStyleSheet("font: 800 30pt \"Times New Roman\";\n" "color: rgb(0, 60, 67);")
+        self.label_3.setStyleSheet("font: 800 30pt \"Arial\";\n" "color: rgb(0, 60, 67);")
         self.label_3.setObjectName("label_3")
         text.setCentralWidget(self.centralwidget)
         # Create a QStatusBar widget with the QMainWindow as its parent
