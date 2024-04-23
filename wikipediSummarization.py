@@ -2,14 +2,41 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import bs4 as bs
 import urllib.request
-import re
 import nltk
-import heapq
-
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
+from nltk.sentiment import SentimentIntensityAnalyzer
+import heapq
+import re
+import random
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+import spacy
+from collections import Counter
+
+
+# Initialize NLTK resources
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('vader_lexicon')
+nlp = spacy.load("en_core_web_sm")
 
 class wikipedia_page(object):
+
+    def extract_top_entities_with_tags(self, text, num_entities=10):
+        doc = nlp(text)
+        entities = [(ent.text, ent.label_) for ent in doc.ents]
+        entity_counts = Counter(entities)
+        top_entities = entity_counts.most_common(num_entities)
+        # Remove duplicates while preserving order
+        unique_entities = []
+        seen_entities = set()
+        for entity in top_entities:
+            if entity[0] not in seen_entities:
+                unique_entities.append(entity)
+                seen_entities.add(entity[0])
+        return unique_entities
+
     def summary(self):
         url = self.lineEdit.text()
         data = urllib.request.urlopen(url)
@@ -24,67 +51,129 @@ class wikipedia_page(object):
         for p in paragraphs:
             text += p.text
 
-        #print(metin) ## ozetlenecek metin 
-
-        # Referans numaralarini kaldiriyoruz.
-        text = re.sub(r'\[[0-9]*\]', ' ', text)
-        text = re.sub(r'\s+', ' ', text)
-
-        print(text)
-
-        # Seperate the sentences
+        text = self.preprocess_text(text=text)
+        # Splitting the text into sentences.
         sentences = nltk.sent_tokenize(text)
 
-        # Get the english stopwords
+        # Get english stopwords
         stopwords = nltk.corpus.stopwords.words('english')
 
         # Remove punctuation marks to find which word is repeated most frequently
-        text_with_words = re.sub('[^a-zA-Z]', ' ', text )
+        text_with_words = re.sub('[^a-zA-Z]', ' ', text)
         text_with_words = re.sub(r'\s+', ' ', text_with_words)
-
         # Keep track of word frequency
-        word_frequency = {}
-        # If word is not a stop word we will add 1 to its count if it is present in the word_frequency
-        # If not start with 1 
-        for word in nltk.word_tokenize(text_with_words):
-            if word not in stopwords:
-                if word in word_frequency.keys():
-                    word_frequency[word] += 1
-                else:
-                    word_frequency[word] = 1
-
-        # Get most frequent word count
+        word_frequency = self.calculate_word_frequency(words=nltk.word_tokenize(text_with_words))
+        if not word_frequency:
+            print("No words found in the text after removing stopwords.")
+            return
+        # Count of Most frequently repeated weighted word
         most_frequent = max(word_frequency.values())
-
         # Finally, to find the weighted frequency, as shown below, we can divide 
         # the occurrence count of all words by the frequency of the most occurring word.
         for word in word_frequency.keys():
             word_frequency[word] = (word_frequency[word]/most_frequent)
-
         # Iterate over the sentences extracted from the text to compute a score for each sentence based 
         # on the presence of words in the word_frequency structure
+        sentence_score = self.calculate_sentence_score(sentences=sentences,word_frequency=word_frequency)
+        # Take the top sentences with the highest score. We can take more depending on the value we provide.
+        summary_sentence = heapq.nlargest(7, sentence_score, key=sentence_score.get)
+
+        summary_total = ' '.join(summary_sentence)
+        top_entities_with_tags = self.extract_top_entities_with_tags(text_with_words)  # Ensure summary_total is passed as a string
+        print("Top 10 most relevant entities with tags:")
+        top_entities = []
+        for entity, tag in top_entities_with_tags:
+            print(f"{entity}: {tag}")
+            top_entities.append(entity)
+
+        # Apply sentiment analysis on the top two entities
+        for entity in top_entities[:10]:
+            sentiment_score = self.analyze_entity_sentiment(entity=entity,sentences=sentences)  # Pass the text associated with the entity
+            print(f"Sentiment analysis for {entity[0]}: {sentiment_score}")
+
+        # Create a word cloud from the summary
+        self.generate_word_cloud(summary_total)
+        self.plot_text_length_distribution(summary_sentence)
+        print("SUMMARY::")
+        print(summary_total)
+        self.textBrowser.setText(summary_total)
+        with open("wikipediaSummarizationOutput.txt", "w") as f:
+            f.write(summary_total)
+
+        
+    def __init__(self):
+        self.stopwords = set(stopwords.words('english'))
+        self.sentiment_analyzer = SentimentIntensityAnalyzer()
+
+    def preprocess_text(self, text):
+        text = re.sub(r'\[[0-9]*\]', ' ', text)
+        text = re.sub(r'\s+', ' ', text)
+        return text
+
+    def tokenize_words(self, text):
+        return word_tokenize(text)
+
+    def remove_stopwords(self, words):
+        return [word for word in words if word.lower() not in self.stopwords]
+
+    def calculate_word_frequency(self, words):
+        word_frequency = {}
+        for word in words:
+            if word in word_frequency:
+                word_frequency[word] += 1
+            else:
+                word_frequency[word] = 1
+        return word_frequency
+
+    def calculate_sentence_score(self, sentences, word_frequency):
         sentence_score = {}
         for sentence in sentences:
-            for word in nltk.word_tokenize(sentence.lower()):
-                if word in word_frequency.keys():
-                    if len(sentence.split(' ')) < 30: # Calculate scores for sentences with fewer than 30 words to avoid excessive length
-                        if sentence in sentence_score.keys(): # The frequency of the first word in the sentence is assigned
+            for word in self.tokenize_words(sentence.lower()):
+                if word in word_frequency:
+                    if len(sentence.split(' ')) < 30:
+                        if sentence in sentence_score:
                             sentence_score[sentence] += word_frequency[word]
                         else:
                             sentence_score[sentence] = word_frequency[word]
+        return sentence_score
+
+    def analyze_entity_sentiment(self, entity, sentences):
+        # Extract the entity text from the tuple
+        entity_text = entity[0]
+        # Collect sentences containing the entity
+        entity_sentences = [sentence for sentence in sentences if entity_text in sentence]
+        # Analyze the sentiment of each sentence containing the entity
+        sentiment_scores = [self.analyze_sentiment(sentence)['compound'] for sentence in entity_sentences]
+        # Aggregate the sentiment scores
+        aggregate_score = sum(sentiment_scores)
+        # Determine if the overall discussion surrounding the entity is positive, negative, or neutral
+        if aggregate_score > 0:
+            return "Positive"
+        elif aggregate_score < 0:
+            return "Negative"
+        else:
+            return "Neutral"
 
 
-        # Take the top 5 sentences with the highest scores.
-        summary_sentences = heapq.nlargest(5, sentence_score, key=sentence_score.get)
+    def analyze_sentiment(self, text):
+        sentiment_score = self.sentiment_analyzer.polarity_scores(text)
+        return sentiment_score
 
+    def generate_word_cloud(self, text):
+        wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
+        plt.figure(figsize=(10, 5))
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis('off')
+        plt.show()
 
-        summary = ' '.join(summary_sentences)
-        print("SUMMARY ::")
-        self.textBrowser.setText(summary)
-        f = open("WikiSummaryOutput.txt", "w", encoding="utf-8")
-        f.write(summary)
-        f.close()
-
+    def plot_text_length_distribution(self, texts):
+        text_lengths = [len(self.tokenize_words(text)) for text in texts]
+        plt.hist(text_lengths, bins=20, color='skyblue', edgecolor='black', alpha=0.7)
+        plt.title('Distribution of Text Lengths')
+        plt.xlabel('Number of Words')
+        plt.ylabel('Frequency')
+        plt.show()
+        
 
     def setupUi(self, wikipedi):
         wikipedi.setObjectName("wikipedi")

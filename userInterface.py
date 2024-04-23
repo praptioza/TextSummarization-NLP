@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from wikipediSummarization import wikipedia_page
 from textSummarization import text_page
+# from textSummarization import text_page
 
 class Ui_MainWindow(object):
 

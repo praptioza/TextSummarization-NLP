@@ -8,21 +8,16 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 
 # Wikipedia URL of the topic you want to summarize
-data = urllib.request.urlopen('https://en.wikipedia.org/wiki/Natural_language_processing')
+data = urllib.request.urlopen('https://www.tomsguide.com/news/what-is-todays-wordle-answer')
 read_text = data.read()
-
 parsed_text = bs.BeautifulSoup(read_text,'lxml')
-
 paragraphs = parsed_text.find_all('p')
-
 text = ""
-
 for p in paragraphs:
     text += p.text
 
 text = re.sub(r'\[[0-9]*\]', ' ', text)
 text = re.sub(r'\s+', ' ', text)
-
 print(text)
 
 # Seperate the sentences
@@ -34,8 +29,6 @@ text_with_words = re.sub(r'\s+', ' ', text_with_words)
 
 # Get the english stopwords
 stopwords = nltk.corpus.stopwords.words('english')
-
-
 
 # Keep track of word frequency
 word_frequency = {}
@@ -68,14 +61,12 @@ for sentence in sentences:
                 else:
                     sentence_score[sentence] = word_frequency[word]
 
-
 # Take the top 7 sentences with the highest score. We can take more depending on the value we provide.
 summary_sentence = heapq.nlargest(7, sentence_score, key=sentence_score.get)
 
 summary = ' '.join(summary_sentence)
 print("Summary::")
 print(summary)
-
 f = open("textSummary.txt", "w")
 f.write(summary)
 f.close()
