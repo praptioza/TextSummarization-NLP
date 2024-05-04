@@ -24,6 +24,6 @@ Step 4: - Select either option of text or URL and add text of your like or any u
 Note: - Output for wordcloud and class distribution will be visible in figures 
 where as the top 10 NER talked about and sentiment towards the NER will be visible in the terminal
 
-## If your code does Not run on macOS Please check if you have Times New Roman Installed 
-
+## If your code does Not run on macOS due to the GUI font 
+We have attached code working on Mac OS as well as Windows
 We have sent you a mail showing that it is running on windows 
