@@ -1,14 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from wikipediSummarization import wikipedia_page
 from textSummarization import text_page
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from collections import Counter
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
-import re
-import numpy as np
-from textblob import TextBlob
+# from textSummarization import text_page
 
 class Ui_MainWindow(object):
 
@@ -19,8 +12,7 @@ class Ui_MainWindow(object):
         self.ui = wikipedia_page()
         self.ui.setupUi(self.window)
         self.window.show()
-        # Analyze text and generate visualizations
-        self.analyze_text()
+
 
     def text_window(self):
         # Create window for text option for start
@@ -29,93 +21,7 @@ class Ui_MainWindow(object):
         self.ui = text_page()
         self.ui.setupUi(self.window)
         self.window.show()
-        # Analyze text and generate visualizations
-        self.analyze_text()
 
-    def analyze_text(self):
-        # Get text from GUI
-        text = self.ui.plainTextEdit.toPlainText()
-        # Preprocess text
-        clean_text = self.clean_text(text)
-        # Tokenize words
-        words = self.tokenize_words(clean_text)
-        # Remove stopwords
-        words = self.remove_stopwords(words)
-        # Generate word cloud
-        self.plot_word_cloud(words)
-        # Calculate top words
-        top_words = self.calculate_top_words(words, n=10)
-        # Plot top words
-        self.plot_top_words(top_words)
-        # Calculate bigrams
-        bigrams = self.calculate_bigrams(words)
-        # Plot bigrams
-        self.plot_bigrams(bigrams)
-        # Calculate sentiment polarity
-        polarity = self.analyze_sentiment(text)
-        # Plot sentiment polarity
-        self.plot_sentiment_polarity(polarity)
-
-    def clean_text(self, text):
-        text = re.sub(r'https?://\S+|www\.\S+', '', text)
-        text = re.sub(r'\s+', ' ', text)
-        return text
-
-    def tokenize_words(self, text):
-        return word_tokenize(text)
-
-    def remove_stopwords(self, words):
-        stop_words = set(stopwords.words('english'))
-        return [word for word in words if word.lower() not in stop_words]
-
-    def calculate_top_words(self, words, n=10):
-        return Counter(words).most_common(n)
-
-    def calculate_bigrams(self, words):
-        return list(zip(words[:-1], words[1:]))
-
-    def plot_word_cloud(self, words):
-        wordcloud = WordCloud(width=800, height=400, random_state=21, max_font_size=110).generate(' '.join(words))
-        plt.figure(figsize=(15, 8))
-        plt.imshow(wordcloud, interpolation="bilinear")
-        plt.axis('off')
-        plt.show()
-
-    def plot_top_words(self, top_words):
-        words, counts = zip(*top_words)
-        plt.figure(figsize=(10, 6))
-        plt.bar(words, counts, color='skyblue')
-        plt.title('Top Words')
-        plt.xlabel('Words')
-        plt.ylabel('Frequency')
-        plt.xticks(rotation=45)
-        plt.show()
-
-    def plot_bigrams(self, bigrams):
-        bigram_counts = Counter(bigrams).most_common(10)
-        bigram, counts = zip(*bigram_counts)
-        plt.figure(figsize=(10, 6))
-        plt.bar(bigram, counts, color='salmon')
-        plt.title('Top Bigrams')
-        plt.xlabel('Bigrams')
-        plt.ylabel('Frequency')
-        plt.xticks(rotation=45)
-        plt.show()
-
-    def analyze_sentiment(self, text):
-        blob = TextBlob(text)
-        polarity = blob.sentiment.polarity
-        return polarity
-
-    def plot_sentiment_polarity(self, polarity):
-        labels = ['Negative', 'Neutral', 'Positive']
-        sizes = [np.sum(polarity < 0), np.sum(polarity == 0), np.sum(polarity > 0)]
-        colors = ['lightcoral', 'gold', 'lightgreen']
-        plt.figure(figsize=(7, 7))
-        plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
-        plt.axis('equal')
-        plt.title('Sentiment Polarity Distribution')
-        plt.show()
 
     def setupUi(self, MainWindow):
         # Set up the main window for selection with a fixed size and style sheet
@@ -139,8 +45,7 @@ class Ui_MainWindow(object):
         self.radioButton.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.radioButton.setStyleSheet("font: 800 20pt \"Times New Roman\";\n" "color: rgb(19, 93, 102);")
         self.radioButton.setObjectName("radioButton")
-
-        # create radio button 2 for Text option and style it 
+        # create radio button 1 for Text option and style it 
         self.radioButton_2 = QtWidgets.QRadioButton(self.centralwidget, clicked = lambda: self.text_window())
         self.radioButton_2.setGeometry(QtCore.QRect(450, 440, 300, 40))
         font = QtGui.QFont()
@@ -151,7 +56,7 @@ class Ui_MainWindow(object):
         self.radioButton_2.setStyleSheet("font: 800 20pt \"Times New Roman\";\n" "color: rgb(19, 93, 102);")
         self.radioButton_2.setObjectName("radioButton_2")
 
-        # create label 1 and setup its properties
+        # create and setup ui elements with geometry, palettes for colors for first label
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(250, 200, 700, 50))
         palette = QtGui.QPalette()
@@ -161,11 +66,11 @@ class Ui_MainWindow(object):
         brush = QtGui.QBrush(QtGui.QColor(227, 254, 247))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Button, brush)
+
+        # set other colors for the active states like text, button text, base, window
         brush = QtGui.QBrush(QtGui.QColor(0, 60, 67))
         brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Text
-
-, brush)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Text, brush)
         brush = QtGui.QBrush(QtGui.QColor(0, 60, 67))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ButtonText, brush)
@@ -178,6 +83,8 @@ class Ui_MainWindow(object):
         brush = QtGui.QBrush(QtGui.QColor(0, 60, 67, 128))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.PlaceholderText, brush)
+
+        # set other colors for the inactive states like text, button text, base, window  
         brush = QtGui.QBrush(QtGui.QColor(170, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
@@ -199,6 +106,8 @@ class Ui_MainWindow(object):
         brush = QtGui.QBrush(QtGui.QColor(0, 60, 67, 128))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.PlaceholderText, brush)
+
+        # set other colors for the disabled states like text, button text, base, window
         brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
@@ -220,7 +129,11 @@ class Ui_MainWindow(object):
         brush = QtGui.QBrush(QtGui.QColor(0, 60, 67, 128))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.PlaceholderText, brush)
+
+        # apply the palette to the label
         self.label.setPalette(palette)
+
+        # set font for label
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(20)
@@ -230,10 +143,12 @@ class Ui_MainWindow(object):
         self.label.setStyleSheet("font: 700 20pt \"Times New Roman\";\n" "color: rgb(0, 60, 67);")
         self.label.setObjectName("label")
 
-        # create label 2 and setup its properties
+        # create and setup ui elements with geometry, palettes for colors for first label
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(300, 80, 600, 60))
         palette = QtGui.QPalette()
+
+        # set other colors for the active states like text, button text, base, window
         brush = QtGui.QBrush(QtGui.QColor(170, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
@@ -255,6 +170,8 @@ class Ui_MainWindow(object):
         brush = QtGui.QBrush(QtGui.QColor(0, 60, 67, 128))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.PlaceholderText, brush)
+
+        # set other colors for the inactive states like text, button text, base, window
         brush = QtGui.QBrush(QtGui.QColor(170, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
@@ -276,8 +193,8 @@ class Ui_MainWindow(object):
         brush = QtGui.QBrush(QtGui.QColor(0, 60, 67, 128))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.PlaceholderText, brush)
-       
 
+        # set other colors for the disabled states like text, button text, base, window
         brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)

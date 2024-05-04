@@ -1,4 +1,3 @@
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 import bs4 as bs
 import urllib.request
@@ -13,6 +12,7 @@ import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 import spacy
 from collections import Counter
+from nltk.util import bigrams
 
 
 # Initialize NLTK resources
@@ -110,6 +110,13 @@ class wikipedia_page(object):
         with open("wikipediaSummarizationOutput.txt", "w") as f:
             f.write(summary_total)
 
+        # New Data Visualizations
+        self.show_wordcloud(text)
+        self.show_top_10_words(text)
+        self.show_bigrams(text)
+        self.show_class_distribution(text)
+        self.show_text_avg_length(text)
+        self.show_sentiment_polarity(sentences)
         
     def __init__(self):
         self.stopwords = set(stopwords.words('english'))
@@ -164,7 +171,6 @@ class wikipedia_page(object):
         else:
             return "Neutral"
 
-
     def analyze_sentiment(self, text):
         sentiment_score = self.sentiment_analyzer.polarity_scores(text)
         return sentiment_score
@@ -177,13 +183,65 @@ class wikipedia_page(object):
         plt.show()
 
     def plot_text_length_distribution(self, texts):
-        text_lengths = [len(self.tokenize_words(text)) for text in texts]
+        text_lengths = [len(self.tokenize_words(text
+
+)) for text in texts]
         plt.hist(text_lengths, bins=20, color='skyblue', edgecolor='black', alpha=0.7)
         plt.title('Distribution of Text Lengths')
         plt.xlabel('Number of Words')
         plt.ylabel('Frequency')
         plt.show()
         
+    def show_wordcloud(self, text):
+        wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
+        plt.figure(figsize=(10, 5))
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis('off')
+        plt.title('Word Cloud')
+        plt.show()
+
+    def show_top_10_words(self, text):
+        words = nltk.word_tokenize(text)
+        word_freq = nltk.FreqDist(words)
+        plt.figure(figsize=(10, 5))
+        word_freq.plot(10, cumulative=False)
+        plt.title('Top 10 Words')
+        plt.show()
+
+    def show_bigrams(self, text):
+        words = nltk.word_tokenize(text)
+        bigram_freq = nltk.FreqDist(list(bigrams(words)))
+        plt.figure(figsize=(10, 5))
+        bigram_freq.plot(10, cumulative=False)
+        plt.title('Top 10 Bigrams')
+        plt.show()
+
+    def show_class_distribution(self, text):
+        # You need to implement this based on your data classes
+        classes = re.findall(r'\b\w+\b', text)
+        class_counter = Counter(classes)
+        plt.bar(class_counter.keys(), class_counter.values(), color='lightcoral')
+        plt.title('Class Distribution')
+        plt.xlabel('Classes')
+        plt.ylabel('Frequency')
+        plt.xticks(rotation=45)
+        plt.show()
+
+    def show_text_avg_length(self, text):
+        sentences = nltk.sent_tokenize(text)
+        avg_length = sum(len(sent.split()) for sent in sentences) / len(sentences)
+        plt.bar(["Average Text Length"], [avg_length], color='lightblue')
+        plt.title('Average Text Length')
+        plt.ylabel('Number of Words')
+        plt.show()
+
+    def show_sentiment_polarity(self, sentences):
+        sentiment_scores = [self.analyze_sentiment(sentence)['compound'] for sentence in sentences]
+        plt.hist(sentiment_scores, bins=20, color='lightgreen', edgecolor='black', alpha=0.7)
+        plt.title('Distribution of Sentiment Scores')
+        plt.xlabel('Sentiment Score')
+        plt.ylabel('Frequency')
+        plt.show()
 
     def setupUi(self, wikipedi):
         wikipedi.setObjectName("wikipedi")
