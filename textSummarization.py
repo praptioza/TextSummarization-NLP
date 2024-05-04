@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 import spacy
 from collections import Counter
-from nltk.collocations import BigramAssocMeasures, BigramCollocationFinder
+from nltk.util import bigrams
 
 # Initialize NLTK resources
 nltk.download('punkt')
@@ -226,11 +226,11 @@ class text_page(object):
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(65, 166, 250, 50))
         font = QtGui.QFont()
-        font.setFamily("Times New Roman")
+        # font.setFamily("Times New Roman")
         font.setPointSize(20)
         font.setItalic(False)
         self.label.setFont(font)
-        self.label.setStyleSheet("font: 800 20pt \"Times New Roman\";\n" "color: rgb(19, 93, 102);")
+        self.label.setStyleSheet("font: 800 20pt ;\n" "color: rgb(19, 93, 102);")
         self.label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         self.label.setObjectName("label")
 
@@ -238,11 +238,11 @@ class text_page(object):
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(65, 482, 250, 50))
         font = QtGui.QFont()
-        font.setFamily("Times New Roman")
+        # font.setFamily("Times New Roman")
         font.setPointSize(20)
         font.setItalic(False)
         self.label_2.setFont(font)
-        self.label_2.setStyleSheet("font: 800 20pt \"Times New Roman\";\n" "color: rgb(19, 93, 102);")
+        self.label_2.setStyleSheet("font: 800 20pt ;\n" "color: rgb(19, 93, 102);")
         self.label_2.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         self.label_2.setObjectName("label_2")
 
@@ -325,12 +325,12 @@ class text_page(object):
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.PlaceholderText, brush)
         self.pushButton.setPalette(palette)
         font = QtGui.QFont()
-        font.setFamily("Times New Roman")
+        # font.setFamily("Times New Roman")
         font.setPointSize(15)
         font.setBold(True)
         font.setItalic(False)
         self.pushButton.setFont(font)
-        self.pushButton.setStyleSheet("font: 700 15pt \"Times New Roman\";\n" "color: rgb(0, 60, 67);")
+        self.pushButton.setStyleSheet("font: 700 15pt ;\n" "color: rgb(0, 60, 67);")
         self.pushButton.setObjectName("pushButton")
 
         # Create a QPlainTextEdit widget and set the central widget as its parent
@@ -343,11 +343,11 @@ class text_page(object):
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
         self.label_3.setGeometry(QtCore.QRect(350, 50, 500, 50))
         font = QtGui.QFont()
-        font.setFamily("Times New Roman")
+        # font.setFamily("Times New Roman")
         font.setPointSize(30)
         font.setItalic(False)
         self.label_3.setFont(font)
-        self.label_3.setStyleSheet("font: 800 30pt \"Times New Roman\";\n" "color: rgb(0, 60, 67);")
+        self.label_3.setStyleSheet("font: 800 30pt ;\n" "color: rgb(0, 60, 67);")
         self.label_3.setObjectName("label_3")
         text.setCentralWidget(self.centralwidget)
         # Create a QStatusBar widget with the QMainWindow as its parent
