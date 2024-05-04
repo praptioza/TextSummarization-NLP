@@ -189,6 +189,7 @@ class text_page(object):
                             sentence_score[sentence] = word_frequency[word]
         return sentence_score
 
+
     def analyze_entity_sentiment(self, entity, sentences):
         # Extract the entity text from the tuple
         entity_text = entity[0]
