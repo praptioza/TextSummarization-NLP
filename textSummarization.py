@@ -11,11 +11,14 @@ import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 import spacy
 from collections import Counter
+from nltk.collocations import BigramAssocMeasures, BigramCollocationFinder
 
 # Initialize NLTK resources
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('vader_lexicon')
+nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
 nlp = spacy.load("en_core_web_sm")
 
 class text_page(object):
@@ -32,7 +35,6 @@ class text_page(object):
                 unique_entities.append(entity)
                 seen_entities.add(entity[0])
         return unique_entities
-    
 
     def plot_sentiment_distribution(self, sentences):
         sentiment_scores = [self.analyze_sentiment(sentence)['compound'] for sentence in sentences]
@@ -42,8 +44,61 @@ class text_page(object):
         plt.ylabel('Frequency')
         plt.show()
 
+    def plot_word_cloud(self, text):
+        wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
+        plt.figure(figsize=(10, 5))
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis('off')
+        plt.show()
 
+    def plot_top_words(self, words):
+        word_counter = Counter(words)
+        top_words = dict(word_counter.most_common(10))
+        plt.bar(top_words.keys(), top_words.values(), color='skyblue')
+        plt.title('Top 10 Words')
+        plt.xlabel('Words')
+        plt.ylabel('Frequency')
+        plt.xticks(rotation=45)
+        plt.show()
 
+    def plot_bigrams(self, text):
+        words = word_tokenize(text)
+        finder = BigramCollocationFinder.from_words(words)
+        bigram_measures = BigramAssocMeasures()
+        top_bigrams = finder.nbest(bigram_measures.pmi, 10)
+        top_bigrams_str = [' '.join(bigram) for bigram in top_bigrams]
+        plt.bar(top_bigrams_str, [finder.score_ngram(bigram_measures.pmi, bigram[0], bigram[1]) for bigram in top_bigrams], color='salmon')
+        plt.title('Top 10 Bigrams')
+        plt.xlabel('Bigrams')
+        plt.ylabel('PMI Score')
+        plt.xticks(rotation=45)
+        plt.show()
+
+    def plot_class_distribution(self, text):
+        classes = re.findall(r'\b\w+\b', text)
+        class_counter = Counter(classes)
+        plt.bar(class_counter.keys(), class_counter.values(), color='lightcoral')
+        plt.title('Class Distribution')
+        plt.xlabel('Classes')
+        plt.ylabel('Frequency')
+        plt.xticks(rotation=45)
+        plt.show()
+
+    def plot_text_avg_length(self, text):
+        sentences = sent_tokenize(text)
+        avg_length = sum(len(word_tokenize(sentence)) for sentence in sentences) / len(sentences)
+        plt.bar(['Avg Text Length'], [avg_length], color='lightblue')
+        plt.title('Average Text Length')
+        plt.ylabel('Number of Words')
+        plt.show()
+
+    def plot_sentiment_polarity(self, text):
+        sentiment_scores = [self.analyze_sentiment(sentence)['compound'] for sentence in nltk.sent_tokenize(text)]
+        avg_polarity = sum(sentiment_scores) / len(sentiment_scores)
+        plt.bar(['Avg Sentiment Polarity'], [avg_polarity], color='lightgreen')
+        plt.title('Average Sentiment Polarity')
+        plt.ylabel('Sentiment Score')
+        plt.show()
 
     def summary(self):
         text = self.plainTextEdit.toPlainText()
@@ -62,13 +117,13 @@ class text_page(object):
             return
         # Count of Most frequently repeated weighted word
         most_frequent = max(word_frequency.values())
-        # Finally, to find the weighted frequency, as shown below, we can divide 
+        # Finally, to find the weighted frequency, as shown below, we can divide
         # the occurrence count of all words by the frequency of the most occurring word.
         for word in word_frequency.keys():
-            word_frequency[word] = (word_frequency[word]/most_frequent)
-        # Iterate over the sentences extracted from the text to compute a score for each sentence based 
+            word_frequency[word] = (word_frequency[word] / most_frequent)
+        # Iterate over the sentences extracted from the text to compute a score for each sentence based
         # on the presence of words in the word_frequency structure
-        sentence_score = self.calculate_sentence_score(sentences=sentences,word_frequency=word_frequency)
+        sentence_score = self.calculate_sentence_score(sentences=sentences, word_frequency=word_frequency)
         # Take the top sentences with the highest score. We can take more depending on the value we provide.
         summary_sentence = heapq.nlargest(7, sentence_score, key=sentence_score.get)
         summary_total = ' '.join(summary_sentence)
@@ -81,19 +136,22 @@ class text_page(object):
 
         # Apply sentiment analysis on the top two entities
         for entity in top_entities[:10]:
-            sentiment_score = self.analyze_entity_sentiment(entity=entity,sentences=sentences)  # Pass the text associated with the entity
+            sentiment_score = self.analyze_entity_sentiment(entity=entity, sentences=sentences)  # Pass the text associated with the entity
             print(f"Sentiment analysis for {entity[0]}: {sentiment_score}")
 
-        # Create a word cloud from the summary
-        self.generate_word_cloud(summary_total)
-        self.plot_text_length_distribution(summary_sentence)
-        self.plot_sentiment_distribution(summary_sentence)
+        # Create visualizations
+        self.plot_word_cloud(summary_total)
+        self.plot_top_words(nltk.word_tokenize(summary_total))
+        self.plot_bigrams(summary_total)
+        self.plot_class_distribution(summary_total)
+        self.plot_text_avg_length(summary_total)
+        self.plot_sentiment_polarity(summary_total)
+
         print("SUMMARY::")
         print(summary_total)
         self.textBrowser_2.setText(summary_total)
         with open("textSummarizationOutput.txt", "w") as f:
             f.write(summary_total)
-
 
     def __init__(self):
         self.stopwords = set(stopwords.words('english'))
@@ -148,26 +206,10 @@ class text_page(object):
         else:
             return "Neutral"
 
-
     def analyze_sentiment(self, text):
         sentiment_score = self.sentiment_analyzer.polarity_scores(text)
         return sentiment_score
 
-    def generate_word_cloud(self, text):
-        wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
-        plt.figure(figsize=(10, 5))
-        plt.imshow(wordcloud, interpolation='bilinear')
-        plt.axis('off')
-        plt.show()
-
-    def plot_text_length_distribution(self, texts):
-        text_lengths = [len(self.tokenize_words(text)) for text in texts]
-        plt.hist(text_lengths, bins=20, color='skyblue', edgecolor='black', alpha=0.7)
-        plt.title('Distribution of Text Lengths')
-        plt.xlabel('Number of Words')
-        plt.ylabel('Frequency')
-        plt.show()
-        
     def setupUi(self, text):
         # style window
         text.setObjectName("text")
@@ -188,7 +230,7 @@ class text_page(object):
         font.setItalic(False)
         self.label.setFont(font)
         self.label.setStyleSheet("font: 800 20pt \"Times New Roman\";\n" "color: rgb(19, 93, 102);")
-        self.label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         self.label.setObjectName("label")
 
         # Create a label widget within the central widget for text summary label and style it
@@ -200,7 +242,7 @@ class text_page(object):
         font.setItalic(False)
         self.label_2.setFont(font)
         self.label_2.setStyleSheet("font: 800 20pt \"Times New Roman\";\n" "color: rgb(19, 93, 102);")
-        self.label_2.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.label_2.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         self.label_2.setObjectName("label_2")
 
         # Create a QTextBrowser widget and set the central widget as its parent to display rich text and allow user interaction like scrolling
@@ -210,7 +252,7 @@ class text_page(object):
         self.textBrowser_2.setObjectName("textBrowser_2")
 
         # set other colors for the active states like text, button text, base, window
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.summary())
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget, clicked=lambda: self.summary())
         self.pushButton.setGeometry(QtCore.QRect(940, 424, 160, 50))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 60, 67))
