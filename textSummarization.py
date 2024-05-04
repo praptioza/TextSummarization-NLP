@@ -16,6 +16,8 @@ from collections import Counter
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('vader_lexicon')
+nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
 nlp = spacy.load("en_core_web_sm")
 
 class text_page(object):
@@ -84,6 +86,8 @@ class text_page(object):
             sentiment_score = self.analyze_entity_sentiment(entity=entity,sentences=sentences)  # Pass the text associated with the entity
             print(f"Sentiment analysis for {entity[0]}: {sentiment_score}")
 
+
+        
         # Create a word cloud from the summary
         self.generate_word_cloud(summary_total)
         self.plot_text_length_distribution(summary_sentence)
@@ -168,6 +172,7 @@ class text_page(object):
         plt.ylabel('Frequency')
         plt.show()
         
+    
     def setupUi(self, text):
         # style window
         text.setObjectName("text")
@@ -206,7 +211,7 @@ class text_page(object):
         # Create a QTextBrowser widget and set the central widget as its parent to display rich text and allow user interaction like scrolling
         self.textBrowser_2 = QtWidgets.QTextBrowser(self.centralwidget)
         self.textBrowser_2.setGeometry(QtCore.QRect(350, 482, 750, 250))
-        self.textBrowser_2.setStyleSheet("background-color: rgb(245, 254, 247)")
+        self.textBrowser_2.setStyleSheet("background-color: rgb(92, 151, 158)")
         self.textBrowser_2.setObjectName("textBrowser_2")
 
         # set other colors for the active states like text, button text, base, window
@@ -293,7 +298,7 @@ class text_page(object):
         # Create a QPlainTextEdit widget and set the central widget as its parent
         self.plainTextEdit = QtWidgets.QPlainTextEdit(self.centralwidget)
         self.plainTextEdit.setGeometry(QtCore.QRect(350, 166, 750, 250))
-        self.plainTextEdit.setStyleSheet("background-color: rgb(245, 254, 247)")
+        self.plainTextEdit.setStyleSheet("background-color: rgb(92, 151, 158)")
         self.plainTextEdit.setObjectName("plainTextEdit")
 
         # Create a QLabel widget for title and set the central widget as its parent
